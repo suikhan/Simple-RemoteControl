@@ -1,6 +1,6 @@
-﻿namespace Control_Client
+﻿namespace RFC
 {
-    partial class teach
+    partial class Teach
     {
         /// <summary>
         /// Required designer variable.

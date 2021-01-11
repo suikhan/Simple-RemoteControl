@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -10,16 +7,16 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 
-namespace Control_Client
+namespace RFC
 {
-    public partial class teach : Form
+    public partial class Teach : Form
     {
         private bool IsReceve = true;
         Image img;
         public delegate void Pt();
         private UdpClient UDP_Client;
 
-        public teach()
+        public Teach()
         {
             InitializeComponent();
         }
@@ -92,7 +89,7 @@ namespace Control_Client
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //MessageBox.Show("AAAAAAA  " + ex.ToString());
             }

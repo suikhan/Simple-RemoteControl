@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // 有关程序集的常规信息通过下列属性集
 // 控制。更改这些属性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("Control_Client")]
+[assembly: AssemblyTitle("RFC")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Umbrella Company")]
-[assembly: AssemblyProduct("Control_Client")]
-[assembly: AssemblyCopyright("版权所有 (C) Umbrella Company 2008")]
+[assembly: AssemblyCompany("北京火绒网络科技有限公司")]
+[assembly: AssemblyProduct("RFC")]
+[assembly: AssemblyCopyright("版权所有 (C) 北京火绒网络科技有限公司， 2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

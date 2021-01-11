@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace Control_Client
+namespace RFC
 {
     static class Program
     {

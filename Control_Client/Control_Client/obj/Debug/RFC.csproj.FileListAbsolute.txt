@@ -1,0 +1,11 @@
+E:\Labs\RemoteControl\Simple-RemoteControl\Run\RFC.exe.config
+E:\Labs\RemoteControl\Simple-RemoteControl\Run\RFC.exe
+E:\Labs\RemoteControl\Simple-RemoteControl\Run\RFC.pdb
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\RFC.Properties.Resources.resources
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\RFC.csproj.GenerateResource.cache
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\RFC.csproj.CoreCompileInputs.cache
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\RFC.exe
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\RFC.pdb
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\RFC.Main_Form.resources
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\RFC.Teach.resources
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\RFC.csprojAssemblyReference.cache

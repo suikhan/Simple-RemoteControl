@@ -7,3 +7,16 @@ C:\Users\Administrator\Desktop\Control_Server\Control_Client\Control_Client\obj\
 C:\Users\Administrator\Desktop\Control_Server\Control_Client\Control_Client\obj\Debug\Control_Client.csproj.GenerateResource.Cache
 C:\Users\Administrator\Desktop\Control_Server\Control_Client\Control_Client\obj\Debug\Control_Client.exe
 C:\Users\Administrator\Desktop\Control_Server\Control_Client\Control_Client\obj\Debug\Control_Client.pdb
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\bin\Debug\Control_Client.exe
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\bin\Debug\Control_Client.pdb
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\Control_Client.csprojAssemblyReference.cache
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\Control_Client.Main_Form.resources
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\Control_Client.Properties.Resources.resources
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\Control_Client.teach.resources
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\Control_Client.csproj.GenerateResource.cache
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\Control_Client.csproj.CoreCompileInputs.cache
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\Control_Client.exe
+E:\Labs\RemoteControl\Simple-RemoteControl\Control_Client\Control_Client\obj\Debug\Control_Client.pdb
+E:\Labs\RemoteControl\Simple-RemoteControl\Run\Control_Client.exe
+E:\Labs\RemoteControl\Simple-RemoteControl\Run\Control_Client.pdb
+E:\Labs\RemoteControl\Simple-RemoteControl\Run\Control_Client.exe.config

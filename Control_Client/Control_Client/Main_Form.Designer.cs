@@ -1,4 +1,4 @@
-﻿namespace Control_Client
+﻿namespace RFC
 {
     partial class Main_Form
     {
@@ -29,16 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main_Form));
-            this.Sys_Icon = new System.Windows.Forms.NotifyIcon(this.components);
             this.Desktop_Timer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
-            // 
-            // Sys_Icon
-            // 
-            this.Sys_Icon.Icon = ((System.Drawing.Icon)(resources.GetObject("Sys_Icon.Icon")));
-            this.Sys_Icon.Text = "远程广播控制(被控端)";
-            this.Sys_Icon.Visible = true;
             // 
             // Desktop_Timer
             // 
@@ -55,15 +47,13 @@
             this.Name = "Main_Form";
             this.ShowIcon = false;
             this.Text = "远程广播控制(被控端)";
-            this.Load += new System.EventHandler(this.Main_Form_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_Form_FormClosing);
+            this.Load += new System.EventHandler(this.Main_Form_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.NotifyIcon Sys_Icon;
         private System.Windows.Forms.Timer Desktop_Timer;
     }
 }
